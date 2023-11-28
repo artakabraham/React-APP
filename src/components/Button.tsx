@@ -1,19 +1,15 @@
-
 interface Props {
-    children: string;
-    onClick: () => void;
-    buttonClass: string;
+  children: string;
+  color?: "primary" | "secondary" | "danger";
+  onClick: () => void;
 }
 
-function Button({ children, onClick, buttonClass }: Props) {
-    return (
-        <button
-            type="button"
-            className={buttonClass}
-            onClick={onClick}
-        >{children}
-        </button>
-    );
+function Button({ children, onClick, color = "primary" }: Props) {
+  return (
+    <button type="button" className={"btn btn-" + color} onClick={onClick}>
+      {children}
+    </button>
+  );
 }
 
 export default Button;
