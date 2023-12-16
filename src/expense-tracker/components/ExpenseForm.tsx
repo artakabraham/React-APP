@@ -40,6 +40,7 @@ const ExpenseForm = ({ onSubmit }: Props) => {
         reset();
       })}
     >
+      ``
       <div className="mb-3">
         <label htmlFor="description" className="form-label">
           Description
