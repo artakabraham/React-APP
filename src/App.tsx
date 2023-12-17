@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios, { CanceledError } from "axios";
+import apiClient, { CanceledError } from "./services/api.client";
 
 interface User {
   id: number;
@@ -14,8 +14,8 @@ function App() {
   useEffect(() => {
     const controller = new AbortController();
     setLoading(true);
-    axios
-      .get<User[]>("https://jsonplaceholder.typicode.com/users", {
+    apiClient
+      .get<User[]>("/users", {
         signal: controller.signal,
       })
       .then((res) => {
@@ -33,20 +33,18 @@ function App() {
   const deleteUser = (user: User) => {
     const originalUsers = [...users];
     setUsers(users.filter((u) => u.id !== user.id));
-    axios
-      .delete("https://jsonplaceholder.typicode.com/users/" + user.id)
-      .catch((error) => {
-        setError(error.message);
-        setUsers(originalUsers);
-      });
+    apiClient.delete("/users/" + user.id).catch((error) => {
+      setError(error.message);
+      setUsers(originalUsers);
+    });
   };
 
   const addUser = () => {
     const newUser = { id: 0, name: "Artak" };
     const originalUsers = [...users];
     setUsers([...users, newUser]);
-    axios
-      .post("https://jsonplaceholder.typicode.com/users", newUser)
+    apiClient
+      .post("/users", newUser)
       .then(({ data: savedUser }) => setUsers([savedUser, ...users]))
       .catch((error) => {
         setError(error.message);
@@ -58,22 +56,17 @@ function App() {
     const originalUsers = [...users];
     const updateUser = { ...user, name: user.name + "!" };
     setUsers(users.map((u) => (u.id === user.id ? updateUser : u)));
-    axios
-      .patch(
-        "https://jsonplaceholder.typicode.com/users/" + user.id,
-        updateUser
-      )
-      .catch((error) => {
-        setError(error.message);
-        setUsers(originalUsers);
-      });
+    apiClient.patch("/users/" + user.id, updateUser).catch((error) => {
+      setError(error.message);
+      setUsers(originalUsers);
+    });
   };
 
   return (
     <>
       {error && <p className="text-danger">{error}</p>}
       {isLoading && <div className="spinner-border"></div>}
-      <button className="btn btn-primary mb3" onClick={() => addUser}>
+      <button className="btn btn-primary mb3" onClick={addUser}>
         Add
       </button>
       <ul className="list-group">
